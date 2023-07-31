@@ -1,16 +1,71 @@
 <script setup>
-import Link from '@/components/Link.vue'
+  import Link from '@/components/Link.vue';
 </script>
 
 <template>
-    <div>
-        <Link to="products">
-        Volver</Link>
+  <div>
+    <Link to="products">Volver</Link>
 
-        <h1 class="text-4xl font-black my-10">Nuevo Producto</h1>
+    <h1 class="text-4xl font-black my-10">Nuevo Producto</h1>
 
+    <div class="flex justify-center bg-white shadow">
+      <div class="mt-10 p-10 w-full 2xl:w-2/4">
         <FormKit type="form">
-            <FormKit type="text" />
+          <FormKit
+            type="text"
+            label="Nombre"
+            name="name"
+            placeholder="Nombre de Producto"
+            validation="required"
+            :validation-message="{
+              required: 'El Nombre del Producto es Obligatorio',
+            }" />
+
+          <FormKit
+            type="file"
+            label="Imagen Producto"
+            name="image"
+            validation="required"
+            :validation-message="{
+              required: 'La Imagen del Producto es Obligatorio',
+            }"
+            accept=".jpg"
+            multiple="true" />
+
+          <FormKit
+            type="select"
+            label="Categoria"
+            name="category"
+            validation="required"
+            :validation-message="{
+              required: 'La Categoria es Obligatorio',
+            }"
+            :options="[1, 2, 3]" />
+
+          <FormKit
+            type="number"
+            label="Precio"
+            name="price"
+            placeholder="Precio
+          de Producto"
+            validation="required"
+            :validation-message="{
+              required: 'El Precio del Producto es Obligatorio',
+            }"
+            min="1" />
+
+          <FormKit
+            type="number"
+            label="Disponible"
+            name="availability"
+            placeholder="Cantidad Diponible"
+            validation="required"
+            :validation-message="{
+              required: 'La Cantidad es Obligatoria',
+            }"
+            min="1" />
         </FormKit>
+      </div>
     </div>
+  </div>
 </template>
