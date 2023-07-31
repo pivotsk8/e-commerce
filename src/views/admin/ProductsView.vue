@@ -1,11 +1,10 @@
 <script setup>
-import MainNav from '@/components/MainNav.vue'
+
 </script>
 
 <template>
     <div>
-        <MainNav />
+        <h1>DEsde admin</h1>
     </div>
 </template>
-
 
