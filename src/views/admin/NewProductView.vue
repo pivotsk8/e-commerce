@@ -1,8 +1,34 @@
 <script setup>
+  import { reactive } from 'vue';
+  import { useRouter } from 'vue-router';
   import useImage from '../../composobles/useImage';
   import Link from '@/components/Link.vue';
+  import { useProductsStore } from '@/stores/products';
 
   const { onFileChange, url, isImageUploaded } = useImage();
+  const products = useProductsStore();
+  const router = useRouter();
+
+  const formData = reactive({
+    name: '',
+    category: '',
+    price: '',
+    availability: '',
+    image: '',
+  });
+
+  const submitHandler = async (data) => {
+    const { image, ...values } = data;
+    try {
+      await products.createProduct({
+        ...values,
+        image: url.value,
+      });
+      router.push({ name: 'products' });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 </script>
 
 <template>
@@ -16,7 +42,9 @@
         <FormKit
           type="form"
           submit-label="Agregar Producto"
-          incomplete-message="Verifica que todos los campos esten llenos">
+          incomplete-message="Verifica que todos los campos esten llenos"
+          @submit="submitHandler"
+          :value="formData">
           <FormKit
             type="text"
             label="Nombre"
@@ -25,7 +53,8 @@
             validation="required"
             :validation-messages="{
               required: 'El Nombre del Producto es Obligatorio',
-            }" />
+            }"
+            v-model.trim="formData.name" />
 
           <FormKit
             type="file"
@@ -37,7 +66,8 @@
             }"
             accept=".jpg"
             multiple="true"
-            @change="onFileChange" />
+            @change="onFileChange"
+            v-model.trim="formData.image" />
 
           <div v-if="isImageUploaded">
             <p class="font-black">Imagen Producto:</p>
@@ -52,7 +82,8 @@
             :validation-messages="{
               required: 'La Categoria es Obligatorio',
             }"
-            :options="[1, 2, 3]" />
+            :options="products.categoriesOptions"
+            v-model.number="formData.category" />
 
           <FormKit
             type="number"
@@ -63,7 +94,8 @@
             :validation-messages="{
               required: 'El Precio del Producto es Obligatorio',
             }"
-            min="1" />
+            min="1"
+            v-model.number="formData.price" />
 
           <FormKit
             type="number"
@@ -74,7 +106,8 @@
             :validation-messages="{
               required: 'La Cantidad es Obligatoria',
             }"
-            min="1" />
+            min="1"
+            v-model.number="formData.availability" />
         </FormKit>
       </div>
     </div>
