@@ -8,6 +8,7 @@ import {
   query,
   limit,
   orderBy,
+  updateDoc,
 } from 'firebase/firestore';
 
 export const useProductsStore = defineStore('products', () => {
@@ -26,6 +27,14 @@ export const useProductsStore = defineStore('products', () => {
     await addDoc(collection(db, 'products'), product);
   }
 
+  async function updateProduct(docRef, product) {
+    const { image, url, ...values } = product;
+
+    image.length
+      ? await updateDoc(docRef, { ...values, image: url.value })
+      : await updateDoc(docRef, values);
+  }
+
   const categoriesOptions = computed(() => {
     const options = [
       { label: 'Selecciona', value: '', attrs: { disabled: true } },
@@ -39,8 +48,10 @@ export const useProductsStore = defineStore('products', () => {
   });
 
   const noResults = computed(() => productsCollection.value.length === 0);
+
   return {
     noResults,
+    updateProduct,
     productsCollection,
     createProduct,
     categoriesOptions,

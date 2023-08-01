@@ -4,8 +4,15 @@
   import { doc } from 'firebase/firestore';
   import { useFirestore, useDocument } from 'vuefire';
   import Link from '@/components/Link.vue';
-  import { useProductsStore } from '../../stores/products';
-  import useImage from '../../composobles/useImage';
+  import { useProductsStore } from '@/stores/products';
+  import useImage from '@/composobles/useImage';
+
+  //Consultar Firestore
+  const route = useRoute();
+  const router = useRouter();
+  const db = useFirestore();
+  const docRef = doc(db, 'products', route.params.id);
+  const product = useDocument(docRef);
 
   const { onFileChange, url, isImageUploaded } = useImage();
   const products = useProductsStore();
@@ -17,6 +24,21 @@
     availability: '',
     image: '',
   });
+
+  watch(product, (product) => {
+    !product
+      ? router.push({ name: 'products' })
+      : Object.assign(formData, product);
+  });
+
+  const submitHandler = async (data) => {
+    try {
+      await products.updateProduct(docRef, { ...data, url });
+      router.push({ name: 'products' });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 </script>
 
 <template>
