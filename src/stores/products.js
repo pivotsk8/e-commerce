@@ -38,7 +38,9 @@ export const useProductsStore = defineStore('products', () => {
     return options;
   });
 
+  const noResults = computed(() => productsCollection.value.length === 0);
   return {
+    noResults,
     productsCollection,
     createProduct,
     categoriesOptions,
