@@ -33,7 +33,7 @@
       </Amount>
       <Amount>
         <template #label>Total a pagar:</template>
-        {{ formatCurrency(0) }}
+        {{ formatCurrency(cart.total) }}
       </Amount>
     </dl>
   </div>
