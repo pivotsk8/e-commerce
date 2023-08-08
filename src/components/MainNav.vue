@@ -32,7 +32,7 @@
     </div>
 
     <nav>
-      <Link to="admin">Administrador</Link>
+      <Link to="sales">Administrador</Link>
     </nav>
   </header>
 </template>
