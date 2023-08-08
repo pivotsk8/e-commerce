@@ -34,7 +34,7 @@
         <template #label>Impuestos:</template>
         {{ formatCurrency(cart.taxe) }}
       </Amount>
-      <Amount>
+      <Amount v-if="coupon.isValidCoupon">
         <template #label>Descuanto:</template>
         {{ formatCurrency(coupon.discount) }}
       </Amount>
@@ -45,5 +45,12 @@
     </dl>
 
     <CouponForm />
+
+    <button
+      type="button"
+      class="w-full bg-indigo-600 mt-10 hover:bg-indigo-700 text-white uppercase font-bold p-3"
+      @click="cart.checkOut">
+      Confirmar Compra
+    </button>
   </div>
 </template>

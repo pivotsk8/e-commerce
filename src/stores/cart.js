@@ -1,9 +1,13 @@
 import { ref, computed, watchEffect } from 'vue';
 import { defineStore } from 'pinia';
+import { collection, addDoc } from 'firebase/firestore';
+import { useFirestore } from 'vuefire';
 import { useCouponStore } from './coupons';
+import { getCurrentDate } from '../helpers';
 
 export const useCartStore = defineStore('cartStore', () => {
   const coupon = useCouponStore();
+  const db = useFirestore();
   const items = ref([]);
   const subTotal = ref(0);
   const taxe = ref(0);
@@ -18,8 +22,8 @@ export const useCartStore = defineStore('cartStore', () => {
       0,
     );
 
-    taxe.value = subTotal.value * TAX_RATE;
-    total.value = (subTotal.value + taxe.value)-coupon.discount;
+    taxe.value = Number((subTotal.value * TAX_RATE).toFixed(2));
+    total.value = subTotal.value + taxe.value - coupon.discount;
   });
 
   function addItem(item) {
@@ -39,6 +43,36 @@ export const useCartStore = defineStore('cartStore', () => {
 
   function removeItem(id) {
     items.value = items.value.filter((item) => item.id !== id);
+  }
+
+  async function checkOut() {
+    try {
+      await addDoc(collection(db, 'sales'), {
+        items: items.value.map((item) => {
+          const { availability, category, ...data } = item;
+          return data;
+        }),
+        subtotal: subTotal.value,
+        taxes: taxe.value,
+        discounts: coupon.discount,
+        total: total.value,
+        date: getCurrentDate(),
+      });
+
+      //reset state
+      $reset();
+      coupon.$reset();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  function $reset() {
+    //reiniciar  el state
+    (items.value = []),
+      (subTotal.value = 0),
+      (taxe.value = 0),
+      (total.value = 0);
   }
 
   const isItemInCart = (id) => items.value.findIndex((item) => item.id === id);
@@ -65,6 +99,7 @@ export const useCartStore = defineStore('cartStore', () => {
     addItem,
     updateQuantity,
     removeItem,
+    checkOut,
     isEmpty,
     checkProductAvailability,
   };

@@ -13,7 +13,10 @@
       class="p-2 bg-white border-gray-300 w-full uppercase"
       v-model="store.couponInput" />
 
-    <button class="bg-green-400 font-bold p-3" @click="store.applyCoupon">
+    <button
+      class="bg-green-400 font-bold p-3 disabled:opacity-30"
+      @click="store.applyCoupon"
+      :disabled="store.isValidCoupon">
       Aplicar
     </button>
   </div>
